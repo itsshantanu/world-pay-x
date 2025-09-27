@@ -3,9 +3,19 @@
 import Link from 'next/link';
 import SimpleWalletConnect from '../components/SimpleWalletConnect';
 import { useWallet } from '../contexts/WalletContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
   const { isConnected, address } = useWallet();
+  const router = useRouter();
+
+  // Redirect when wallet connects
+  useEffect(() => {
+    if (isConnected) {
+      router.push('/dashboard');
+    }
+  }, [isConnected, router]);
 
   // Shorten wallet address for display
   const shortAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
@@ -82,7 +92,7 @@ export default function Home() {
         {isConnected && (
           <div className="mt-2">
             <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 text-sm underline">
-              Go to Dashboard →
+              {/* Go to Dashboard → */}
             </Link>
           </div>
         )}
