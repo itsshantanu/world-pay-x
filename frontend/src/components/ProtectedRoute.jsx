@@ -9,6 +9,7 @@ export default function ProtectedRoute({ children }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     // Add a small delay to allow wallet context to initialize
     const timer = setTimeout(() => {

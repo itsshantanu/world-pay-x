@@ -13,9 +13,9 @@ export default function Home() {
   // Redirect when wallet connects
   useEffect(() => {
     if (isConnected) {
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     }
-  }, [isConnected, router]);
+  }, [isConnected]);
 
   // Shorten wallet address for display
   const shortAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
@@ -76,17 +76,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* World ID Connect Component */}
+        {/* Wallet connect section */}
         <div className="w-full">
-          <SimpleWalletConnect />
+          {!isConnected ? (
+            <SimpleWalletConnect />
+          ) : (
+            <div className="mt-2 text-gray-300 text-sm">
+              Connected: <span className="font-mono text-white">{shortAddress}</span>
+            </div>
+          )}
         </div>
-
-        {/* Show wallet address if connected */}
-        {isConnected && (
-          <div className="mt-4 text-gray-300 text-sm">
-            Connected: <span className="font-mono text-white">{shortAddress}</span>
-          </div>
-        )}
 
         {/* Dashboard Link */}
         {isConnected && (
