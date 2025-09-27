@@ -6,7 +6,7 @@ out/
 lib/
 
 # Broadcast logs (ignore all, keep folder)
-broadcast/*
+broadcast/
 !broadcast/.gitkeep
 
 # Docs
