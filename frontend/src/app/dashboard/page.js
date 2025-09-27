@@ -350,9 +350,18 @@ function DashboardContent() {
                 Cancel
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   setShowAddFundsModal(false);
-                  // Here you would handle the deposit logic
+                  try {
+                    const { createDirectDebitSubscription } = await import('../../integration/subscribe');
+                    await createDirectDebitSubscription({
+                      merchant: "0x327f589ff76a195754f11735e0EAad31e4795401", // example merchant
+                      amountPyusd: "10", // could be replaced with input value
+                      useTreasury: false
+                    });
+                  } catch (err) {
+                    console.error("Subscription failed", err);
+                  }
                 }}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
               >
