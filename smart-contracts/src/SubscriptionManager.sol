@@ -37,7 +37,6 @@ contract SubscriptionManager {
         uint256 interval,
         bool useTreasury
     ) external returns (uint256) {
-        require(interval >= 60, "Interval too short");
 
         uint256 subId = subscriptionCount++;
         subscriptions[subId] = Subscription({
