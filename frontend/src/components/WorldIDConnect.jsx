@@ -84,7 +84,7 @@ export default function WorldIDConnect() {
     <div className="flex flex-col items-center space-y-4 p-6 bg-gray-800 rounded-lg shadow-lg border border-gray-600">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-white mb-2">
-          Connect with World ID
+          Connect with Wallet
         </h2>
         <p className="text-gray-300 text-sm">
           Secure, privacy-preserving identity verification

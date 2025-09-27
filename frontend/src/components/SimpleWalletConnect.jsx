@@ -37,27 +37,27 @@ export default function SimpleWalletConnect() {
     }
   }
 
-  // Simulate World ID verification
-  const handleWorldIDVerification = async () => {
+  // Simulate Wallet verification
+  const handleWalletVerification = async () => {
     setIsVerifying(true)
     
     try {
-      // Simulate World ID verification process
+      // Simulate wallet verification process
       await new Promise(resolve => setTimeout(resolve, 2000))
       
-      // Mock World ID proof
+      // Mock wallet proof
       const mockProof = {
         merkle_root: "0x1234567890abcdef",
         nullifier_hash: "0xabcdef1234567890",
         proof: "0x9876543210fedcba",
-        verification_level: "orb"
+        verification_level: "wallet"
       }
       
       setWorldIdProof(mockProof)
       setIsVerified(true)
     } catch (error) {
-      console.error('World ID verification failed:', error)
-      alert('World ID verification failed. Please try again.')
+      console.error('Wallet verification failed:', error)
+      alert('Wallet verification failed. Please try again.')
     } finally {
       setIsVerifying(false)
     }
@@ -67,7 +67,7 @@ export default function SimpleWalletConnect() {
     if (!isConnected) {
       await connectWallet()
     } else if (!isVerified) {
-      await handleWorldIDVerification()
+      await handleWalletVerification()
     }
   }
 
@@ -84,9 +84,9 @@ export default function SimpleWalletConnect() {
     } else if (!isConnected) {
       return "Connect Wallet"
     } else if (isVerifying) {
-      return "Verifying with World ID..."
+      return "Verifying Wallet..."
     } else if (!isVerified) {
-      return "Verify with World ID"
+      return "Verify Wallet"
     } else {
       return "Connected & Verified"
     }
@@ -106,14 +106,14 @@ export default function SimpleWalletConnect() {
 
   return (
     <div className="flex flex-col items-center space-y-4 p-6 bg-gray-800 rounded-lg shadow-lg border border-gray-600">
-      <div className="text-center">
+      {/* <div className="text-center">
         <h2 className="text-2xl font-bold text-white mb-2">
-          Connect with World ID
+          Connect with Wallet
         </h2>
         <p className="text-gray-300 text-sm">
-          Secure, privacy-preserving identity verification
+          Secure wallet connection with verification
         </p>
-      </div>
+      </div> */}
 
       {isConnected && (
         <div className="text-center">
@@ -127,7 +127,7 @@ export default function SimpleWalletConnect() {
       {isVerified && worldIdProof && (
         <div className="text-center bg-green-900/30 p-3 rounded-lg border border-green-600/30">
           <p className="text-sm text-green-400 font-medium">
-            ✅ World ID Verified
+            ✅ Wallet Verified
           </p>
           <p className="text-xs text-green-300 mt-1">
             Verification Level: {worldIdProof.verification_level}
@@ -176,7 +176,7 @@ export default function SimpleWalletConnect() {
             isVerified ? 'bg-green-500' : 'bg-gray-500'
           }`} />
           <span className={isVerified ? 'text-green-400' : 'text-gray-400'}>
-            World ID {isVerified ? 'Verified' : 'Unverified'}
+            Wallet {isVerified ? 'Verified' : 'Unverified'}
           </span>
         </div>
       </div>

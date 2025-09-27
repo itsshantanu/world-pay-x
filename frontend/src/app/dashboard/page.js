@@ -221,8 +221,8 @@ export default function Dashboard() {
             </svg>
           </div>
           <div>
-            <h4 className="font-semibold mb-1">World ID Connected</h4>
-            <p className="text-sm text-gray-400">Successfully verified your World ID proof!</p>
+            <h4 className="font-semibold mb-1">Wallet Connected</h4>
+            <p className="text-sm text-gray-400">Successfully verified your wallet</p>
           </div>
           <button
             onClick={() => setShowToast(false)}
