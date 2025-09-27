@@ -1,30 +1,42 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { TabsList, Tabs, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Button } from '../../components/ui/button';
+import { TabsList, Tabs, TabsTrigger, TabsContent } from '../../components/ui/tabs';
+import ProtectedRoute from '../../components/ProtectedRoute';
+import { useWallet } from '../../contexts/WalletContext';
+import { useRouter } from 'next/navigation';
+import { ethers } from 'ethers';
 
-export default function Dashboard() {
+function DashboardContent() {
   const [showToast, setShowToast] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+
+  const { walletAddress, disconnect } = useWallet();
+  const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
+  const router = useRouter();
+  const [sepoliaBalance, setSepoliaBalance] = useState(null);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        if (walletAddress && window.ethereum) {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const balance = await provider.getBalance(walletAddress);
+          setSepoliaBalance(ethers.formatEther(balance));
+        }
+      } catch (err) {
+        console.error("Failed to fetch Sepolia balance", err);
+      }
+    };
+    fetchBalance();
+  }, [walletAddress]);
 
   useEffect(() => {
     setShowToast(true);
-    
-    // Hide toast after 4 sec
-    const timer = setTimeout(() => {
-      setShowToast(false);
-    }, 4000);
-
+    const timer = setTimeout(() => setShowToast(false), 4000);
     return () => clearTimeout(timer);
   }, []);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -42,99 +54,45 @@ export default function Dashboard() {
         </div>
         
         <div className="flex items-center space-x-4">
+          {walletAddress && (
+            <div className="flex items-center space-x-2 bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm font-mono">
+              <span>{shortAddress}</span>
+            </div>
+          )}
+          {sepoliaBalance !== null && (
+            <div className="flex items-center space-x-2 bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full text-sm">
+              <span>{parseFloat(sepoliaBalance).toFixed(4)} ETH</span>
+            </div>
+          )}
           <div className="flex items-center space-x-2 bg-green-900/30 text-green-400 px-3 py-1 rounded-full text-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span>World ID Verified</span>
+            <span>Verified</span>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <span>Add Funds</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md">
-              <DialogHeader>
-                <div className="flex items-center mb-2">
-                  <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-3">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                  </div>
-                  <div>
-                    <DialogTitle className="text-xl font-bold text-white">Add Funds</DialogTitle>
-                  </div>
-                </div>
-                <DialogDescription className="text-sm text-gray-400">
-                  Deposit crypto to your vault and earn yield while paying subscriptions
-                </DialogDescription>
-              </DialogHeader>
+          <Button
+            onClick={() => setShowAddFundsModal(true)}
+            variant="secondary"
+            className="flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span>Add Funds</span>
+          </Button>
 
-              <div className="space-y-6">
-                {/* Select Subscription */}
-                <div>
-                  <label className="block text-white font-semibold mb-3">Select Subscription</label>
-                  <div className="relative">
-                    <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
-                      <option>Choose subscription service</option>
-                      <option>Netflix - $15.99/month</option>
-                      <option>Spotify - $9.99/month</option>
-                      <option>Disney+ - $7.99/month</option>
-                      <option>YouTube Premium - $11.99/month</option>
-                    </select>
-                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Deposit Amount and Pay With */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-white font-semibold mb-3">Deposit Amount</label>
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white font-semibold mb-3">Pay With</label>
-                    <div className="relative">
-                      <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
-                        <option>ETH</option>
-                        <option>USDC</option>
-                        <option>USDT</option>
-                        <option>DAI</option>
-                      </select>
-                      <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <DialogFooter className="flex space-x-4 mt-6">
-                <Button
-                  variant="outline"
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white border-gray-700"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  Confirm Deposit
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          {/* Disconnect Wallet */}
+          <Button
+            onClick={() => {
+              disconnect();
+              router.push('/');
+            }}
+            variant="destructive"
+            className="flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Disconnect</span>
+          </Button>
         </div>
       </header>
 
@@ -243,7 +201,8 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+          {/* End transaction history */}
           </TabsContent>
           <TabsContent value="subscriptions" className="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-2">
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
@@ -308,8 +267,8 @@ export default function Dashboard() {
             </svg>
           </div>
           <div>
-            <h4 className="font-semibold mb-1">World ID Connected</h4>
-            <p className="text-sm text-gray-400">Successfully verified your World ID proof!</p>
+            <h4 className="font-semibold mb-1">Wallet Connected</h4>
+            <p className="text-sm text-gray-400">Successfully verified your wallet</p>
           </div>
           <button
             onClick={() => setShowToast(false)}
@@ -322,6 +281,104 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Add Funds Modal */}
+      {showAddFundsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full">
+            {/* Modal Header */}
+            <div className="flex items-center mb-6">
+              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Add Funds</h2>
+                <p className="text-sm text-gray-400">Deposit crypto to your vault and earn yield while paying subscriptions</p>
+              </div>
+            </div>
+
+            {/* Select Subscription */}
+            <div className="mb-6">
+              <label className="block text-white font-semibold mb-3">Select Subscription</label>
+              <div className="relative">
+                <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
+                  <option>Choose subscription service</option>
+                  <option>Netflix - $15.99/month</option>
+                  <option>Spotify - $9.99/month</option>
+                  <option>Disney+ - $7.99/month</option>
+                  <option>YouTube Premium - $11.99/month</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Deposit Amount and Pay With */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div>
+                <label className="block text-white font-semibold mb-3">Deposit Amount</label>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-white font-semibold mb-3">Pay With</label>
+                <div className="relative">
+                  <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
+                    <option>ETH</option>
+                    <option>USDC</option>
+                    <option>USDT</option>
+                    <option>DAI</option>
+                  </select>
+                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowAddFundsModal(false)}
+                className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setShowAddFundsModal(false);
+                  try {
+                    const { createDirectDebitSubscription } = await import('../../integration/subscribe');
+                    await createDirectDebitSubscription({
+                      merchant: "0x327f589ff76a195754f11735e0EAad31e4795401", // example merchant
+                      amountPyusd: "10", // could be replaced with input value
+                      useTreasury: false
+                    });
+                  } catch (err) {
+                    console.error("Subscription failed", err);
+                  }
+                }}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
+              >
+                Confirm Deposit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }

@@ -1,6 +1,25 @@
+'use client';
+
 import Link from 'next/link';
+import SimpleWalletConnect from '../components/SimpleWalletConnect';
+import { useWallet } from '../contexts/WalletContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const { isConnected, address } = useWallet();
+  const router = useRouter();
+
+  // Redirect when wallet connects
+  useEffect(() => {
+    if (isConnected) {
+      window.location.href = '/dashboard';
+    }
+  }, [isConnected]);
+
+  // Shorten wallet address for display
+  const shortAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-900 border border-gray-700 rounded-2xl p-8 text-center">
@@ -25,7 +44,7 @@ export default function Home() {
               </svg>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-1">Secure World ID Verification</h3>
+              <h3 className="text-white font-semibold mb-1">Secure Verification</h3>
               <p className="text-gray-400 text-sm">Prove you're human, privately</p>
             </div>
           </div>
@@ -57,13 +76,26 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Connect Button */}
-        <Link href="/dashboard" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-          </svg>
-          Connect with World ID
-        </Link>
+        {/* Wallet connect section */}
+        <div className="w-full">
+          {!isConnected ? (
+            <SimpleWalletConnect />
+          ) : (
+            <div className="mt-2 text-gray-300 text-sm">
+              Connected: <span className="font-mono text-white">{shortAddress}</span>
+            </div>
+          )}
+        </div>
+          <div className='text-white' >
+          </div>
+        {/* Dashboard Link */}
+        {isConnected && (
+          <div className="mt-2">
+            <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 text-sm underline">
+              {/* Go to Dashboard → */}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
