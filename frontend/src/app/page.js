@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SimpleWalletConnect from '../components/SimpleWalletConnect';
 
 export default function Home() {
   return (
@@ -57,13 +58,17 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Connect Button */}
-        <Link href="/dashboard" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-          </svg>
-          Connect with World ID
-        </Link>
+        {/* World ID Connect Component */}
+        <div className="w-full">
+          <SimpleWalletConnect />
+        </div>
+        
+        {/* Dashboard Link */}
+        <div className="mt-4">
+          <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 text-sm underline">
+            Go to Dashboard →
+          </Link>
+        </div>
       </div>
     </div>
   );

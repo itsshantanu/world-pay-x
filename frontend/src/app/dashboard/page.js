@@ -2,18 +2,10 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TabsList, Tabs, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 export default function Dashboard() {
   const [showToast, setShowToast] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
 
   useEffect(() => {
     setShowToast(true);
@@ -46,95 +38,16 @@ export default function Dashboard() {
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span>World ID Verified</span>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <span>Add Funds</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md">
-              <DialogHeader>
-                <div className="flex items-center mb-2">
-                  <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-3">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                  </div>
-                  <div>
-                    <DialogTitle className="text-xl font-bold text-white">Add Funds</DialogTitle>
-                  </div>
-                </div>
-                <DialogDescription className="text-sm text-gray-400">
-                  Deposit crypto to your vault and earn yield while paying subscriptions
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="space-y-6">
-                {/* Select Subscription */}
-                <div>
-                  <label className="block text-white font-semibold mb-3">Select Subscription</label>
-                  <div className="relative">
-                    <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
-                      <option>Choose subscription service</option>
-                      <option>Netflix - $15.99/month</option>
-                      <option>Spotify - $9.99/month</option>
-                      <option>Disney+ - $7.99/month</option>
-                      <option>YouTube Premium - $11.99/month</option>
-                    </select>
-                    <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Deposit Amount and Pay With */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-white font-semibold mb-3">Deposit Amount</label>
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white font-semibold mb-3">Pay With</label>
-                    <div className="relative">
-                      <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
-                        <option>ETH</option>
-                        <option>USDC</option>
-                        <option>USDT</option>
-                        <option>DAI</option>
-                      </select>
-                      <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <DialogFooter className="flex space-x-4 mt-6">
-                <Button
-                  variant="outline"
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white border-gray-700"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  Confirm Deposit
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button
+            onClick={() => setShowAddFundsModal(true)}
+            variant="secondary"
+            className="flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span>Add Funds</span>
+          </Button>
         </div>
       </header>
 
@@ -322,6 +235,87 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Add Funds Modal */}
+      {showAddFundsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full">
+            {/* Modal Header */}
+            <div className="flex items-center mb-6">
+              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Add Funds</h2>
+                <p className="text-sm text-gray-400">Deposit crypto to your vault and earn yield while paying subscriptions</p>
+              </div>
+            </div>
+
+            {/* Select Subscription */}
+            <div className="mb-6">
+              <label className="block text-white font-semibold mb-3">Select Subscription</label>
+              <div className="relative">
+                <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
+                  <option>Choose subscription service</option>
+                  <option>Netflix - $15.99/month</option>
+                  <option>Spotify - $9.99/month</option>
+                  <option>Disney+ - $7.99/month</option>
+                  <option>YouTube Premium - $11.99/month</option>
+                </select>
+                <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Deposit Amount and Pay With */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div>
+                <label className="block text-white font-semibold mb-3">Deposit Amount</label>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-white font-semibold mb-3">Pay With</label>
+                <div className="relative">
+                  <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
+                    <option>ETH</option>
+                    <option>USDC</option>
+                    <option>USDT</option>
+                    <option>DAI</option>
+                  </select>
+                  <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowAddFundsModal(false)}
+                className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddFundsModal(false);
+                  // Here you would handle the deposit logic
+                }}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
+              >
+                Confirm Deposit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
