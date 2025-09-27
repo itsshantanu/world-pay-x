@@ -4,13 +4,15 @@ import { Button } from '../../components/ui/button';
 import { TabsList, Tabs, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { useWallet } from '../../contexts/WalletContext';
+import { useRouter } from 'next/navigation';
 
 function DashboardContent() {
   const [showToast, setShowToast] = useState(false);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
 
-  const { walletAddress } = useWallet();
+  const { walletAddress, disconnect } = useWallet();
   const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
+  const router = useRouter();
 
   useEffect(() => {
     setShowToast(true);
@@ -42,7 +44,7 @@ function DashboardContent() {
           )}
           <div className="flex items-center space-x-2 bg-green-900/30 text-green-400 px-3 py-1 rounded-full text-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span>World ID Verified</span>
+            <span>Verified</span>
           </div>
           <Button
             onClick={() => setShowAddFundsModal(true)}
@@ -53,6 +55,21 @@ function DashboardContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             <span>Add Funds</span>
+          </Button>
+
+          {/* Disconnect Wallet */}
+          <Button
+            onClick={() => {
+              disconnect();
+              router.push('/');
+            }}
+            variant="destructive"
+            className="flex items-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Disconnect</span>
           </Button>
         </div>
       </header>
