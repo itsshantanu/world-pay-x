@@ -5,6 +5,7 @@ import { TabsList, Tabs, TabsTrigger, TabsContent } from '../../components/ui/ta
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { useWallet } from '../../contexts/WalletContext';
 import { useRouter } from 'next/navigation';
+import { ethers } from 'ethers';
 
 function DashboardContent() {
   const [showToast, setShowToast] = useState(false);
@@ -13,6 +14,22 @@ function DashboardContent() {
   const { walletAddress, disconnect } = useWallet();
   const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
   const router = useRouter();
+  const [sepoliaBalance, setSepoliaBalance] = useState(null);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        if (walletAddress && window.ethereum) {
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const balance = await provider.getBalance(walletAddress);
+          setSepoliaBalance(ethers.formatEther(balance));
+        }
+      } catch (err) {
+        console.error("Failed to fetch Sepolia balance", err);
+      }
+    };
+    fetchBalance();
+  }, [walletAddress]);
 
   useEffect(() => {
     setShowToast(true);
@@ -40,6 +57,11 @@ function DashboardContent() {
           {walletAddress && (
             <div className="flex items-center space-x-2 bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm font-mono">
               <span>{shortAddress}</span>
+            </div>
+          )}
+          {sepoliaBalance !== null && (
+            <div className="flex items-center space-x-2 bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full text-sm">
+              <span>{parseFloat(sepoliaBalance).toFixed(4)} ETH</span>
             </div>
           )}
           <div className="flex items-center space-x-2 bg-green-900/30 text-green-400 px-3 py-1 rounded-full text-sm">
