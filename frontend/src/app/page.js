@@ -86,7 +86,8 @@ export default function Home() {
             </div>
           )}
         </div>
-
+          <div className='text-white' >
+          </div>
         {/* Dashboard Link */}
         {isConnected && (
           <div className="mt-2">
