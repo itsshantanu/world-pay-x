@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { TabsList, Tabs, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '../../components/ui/button';
+import { TabsList, Tabs, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 
 export default function Dashboard() {
   const [showToast, setShowToast] = useState(false);
