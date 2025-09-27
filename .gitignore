@@ -1,0 +1,19 @@
+# Build artifacts
+cache/
+out/
+
+# Dependencies
+lib/
+
+# Broadcast logs (ignore all, keep folder)
+broadcast/*
+!broadcast/.gitkeep
+
+# Docs
+docs/
+
+# Local environment variables
+.env
+
+# macOS system files
+.DS_Store
