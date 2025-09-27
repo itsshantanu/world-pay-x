@@ -2,21 +2,22 @@
 import { useEffect, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { TabsList, Tabs, TabsTrigger, TabsContent } from '../../components/ui/tabs';
+import ProtectedRoute from '../../components/ProtectedRoute';
+import { useWallet } from '../../contexts/WalletContext';
 
-export default function Dashboard() {
+function DashboardContent() {
   const [showToast, setShowToast] = useState(false);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
 
+  const { walletAddress } = useWallet();
+  const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
+
   useEffect(() => {
     setShowToast(true);
-    
-    // Hide toast after 4 sec
-    const timer = setTimeout(() => {
-      setShowToast(false);
-    }, 4000);
-
+    const timer = setTimeout(() => setShowToast(false), 4000);
     return () => clearTimeout(timer);
   }, []);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -34,6 +35,11 @@ export default function Dashboard() {
         </div>
         
         <div className="flex items-center space-x-4">
+          {walletAddress && (
+            <div className="flex items-center space-x-2 bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm font-mono">
+              <span>{shortAddress}</span>
+            </div>
+          )}
           <div className="flex items-center space-x-2 bg-green-900/30 text-green-400 px-3 py-1 rounded-full text-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span>World ID Verified</span>
@@ -156,7 +162,8 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+          {/* End transaction history */}
           </TabsContent>
           <TabsContent value="subscriptions" className="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-2">
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
@@ -317,5 +324,13 @@ export default function Dashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }

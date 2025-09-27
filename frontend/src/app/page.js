@@ -1,7 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import SimpleWalletConnect from '../components/SimpleWalletConnect';
+import { useWallet } from '../contexts/WalletContext';
 
 export default function Home() {
+  const { isConnected, address } = useWallet();
+
+  // Shorten wallet address for display
+  const shortAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-900 border border-gray-700 rounded-2xl p-8 text-center">
@@ -62,13 +70,22 @@ export default function Home() {
         <div className="w-full">
           <SimpleWalletConnect />
         </div>
-        
+
+        {/* Show wallet address if connected */}
+        {isConnected && (
+          <div className="mt-4 text-gray-300 text-sm">
+            Connected: <span className="font-mono text-white">{shortAddress}</span>
+          </div>
+        )}
+
         {/* Dashboard Link */}
-        <div className="mt-4">
-          <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 text-sm underline">
-            Go to Dashboard →
-          </Link>
-        </div>
+        {isConnected && (
+          <div className="mt-2">
+            <Link href="/dashboard" className="text-blue-400 hover:text-blue-300 text-sm underline">
+              Go to Dashboard →
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
