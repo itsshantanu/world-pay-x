@@ -45,7 +45,7 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-white font-semibold mb-1">Secure Verification</h3>
-              <p className="text-gray-400 text-sm">Prove you're human, privately</p>
+              <p className="text-gray-400 text-sm">Prove you&apos;re human, privately</p>
             </div>
           </div>
 
