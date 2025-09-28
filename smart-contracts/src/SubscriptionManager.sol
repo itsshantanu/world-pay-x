@@ -57,7 +57,10 @@ contract SubscriptionManager {
     function executePayment(uint256 subId) external {
         Subscription storage sub = subscriptions[subId];
         require(sub.active, "Inactive");
-        require(block.timestamp >= sub.nextPayment, "Not due yet");
+        
+        if (sub.interval > 0) {
+            require(block.timestamp >= sub.nextPayment, "Not due yet");
+        }
 
         if (sub.useTreasury) {
             // Pull funds from Treasury balance
