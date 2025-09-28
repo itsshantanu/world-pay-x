@@ -379,7 +379,7 @@ function DashboardContent() {
                 }}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
               >
-               Deposit
+               Confirm
               </button>
             </div>
           </div>
