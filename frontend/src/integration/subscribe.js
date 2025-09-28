@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import TreasuryABI from "../abis/Treasury.json";
 import SubscriptionManagerABI from "../abis/SubscriptionManager.json";
 import ERC20ABI from "../abis/ERC20.json";
+import { showToast } from "../utils/toast.js";
 
 const PYUSD_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 const TREASURY_ADDRESS = "0xDe40b9919B0F3850D7726FE590a890E0Dc86A83e";
@@ -33,8 +34,8 @@ export async function createDirectDebitSubscription({
   // Check user's PYUSD balance first
   const userAddress = await signer.getAddress();
   const userBalance = await pyusd.balanceOf(userAddress);
-  console.log("User PYUSD balance:", ethers.formatUnits(userBalance, 6));
-  console.log("Amount needed:", amountPyusd);
+  showToast(`User PYUSD balance: ${ethers.formatUnits(userBalance, 6)}`, 'info');
+  showToast(`Amount needed: ${amountPyusd}`, 'info');
   
   if (userBalance < amount) {
     throw new Error(`Insufficient PYUSD balance. You have ${ethers.formatUnits(userBalance, 6)} PYUSD but need ${amountPyusd} PYUSD`);
@@ -45,10 +46,10 @@ export async function createDirectDebitSubscription({
     try {
       const setManagerTx = await treasury.setSubscriptionManager(SUBSCRIPTION_MANAGER_ADDRESS);
       await setManagerTx.wait();
-      console.log("Treasury authorized SubscriptionManager");
+      showToast("Treasury authorized SubscriptionManager", 'success');
     } catch (error) {
       // If it fails, it might already be set or we don't have permissions
-      console.log("Treasury authorization step skipped (might already be set):", error.message);
+      showToast(`Treasury authorization step skipped: ${error.message}`, 'warning');
     }
   }
 
@@ -56,22 +57,22 @@ export async function createDirectDebitSubscription({
   if (useTreasury) {
     const approveTx = await pyusd.approve(TREASURY_ADDRESS, amount);
     await approveTx.wait();
-    console.log("Treasury approved for", amountPyusd, "PYUSD");
+    showToast(`Treasury approved for ${amountPyusd} PYUSD`, 'success');
   } else {
     // Approve a larger amount to handle multiple attempts
     const approveAmount = amount * 10n; // Approve 10x the needed amount
     const approveTx = await pyusd.approve(SUBSCRIPTION_MANAGER_ADDRESS, approveAmount);
     await approveTx.wait();
-    console.log("SubscriptionManager approved for", ethers.formatUnits(approveAmount, 6), "PYUSD");
+    showToast(`SubscriptionManager approved for ${ethers.formatUnits(approveAmount, 6)} PYUSD`, 'success');
   }
 
-  console.log("Creating subscription...");
+  showToast("Creating subscription...", 'info');
   
   // Validate merchant address
   if (!ethers.isAddress(merchant)) {
     throw new Error(`Invalid merchant address: ${merchant}`);
   }
-  console.log("Merchant address is valid:", merchant);
+  showToast(`Merchant address is valid: ${merchant}`, 'success');
   
   const tx = await subscriptionManager.createSubscription(
     merchant,
@@ -88,54 +89,55 @@ export async function createDirectDebitSubscription({
     .find(e => e && e.name === "SubscriptionCreated");
 
   const subId = event?.args?.subId;
-  console.log("Subscription created with ID:", subId?.toString());
+  showToast(`Subscription created with ID: ${subId?.toString()}`, 'success');
 
   if (useTreasury) {
-    console.log("Depositing into Treasury for subId:", subId?.toString());
+    showToast(`Depositing into Treasury for subId: ${subId?.toString()}`, 'info');
     
     // Check Treasury balance before deposit
     const balanceBefore = await treasury.balances(subId);
-    console.log("Treasury balance for subId before deposit:", balanceBefore.toString());
+    showToast(`Treasury balance before deposit: ${balanceBefore.toString()}`, 'info');
     
     const depositTx = await treasury.deposit(subId, amount);
     await depositTx.wait();
     
     // Check Treasury balance after deposit
     const balanceAfter = await treasury.balances(subId);
-    console.log("Treasury balance for subId after deposit:", balanceAfter.toString());
-    console.log("Successfully deposited", amountPyusd, "PYUSD into Treasury");
+    showToast(`Treasury balance after deposit: ${balanceAfter.toString()}`, 'info');
+    showToast(`Successfully deposited ${amountPyusd} PYUSD into Treasury`, 'success');
   }
 
-  console.log("Executing payment...");
+  showToast("Executing payment...", 'info');
   
   // Add debugging before executing payment
-  console.log("About to execute payment for subId:", subId?.toString());
-  console.log("useTreasury:", useTreasury);
+  showToast(`About to execute payment for subId: ${subId?.toString()}`, 'info');
+  showToast(`useTreasury: ${useTreasury}`, 'info');
   
   try {
     const payTx = await subscriptionManager.executePayment(subId);
     await payTx.wait();
-    console.log("Payment executed successfully!");
+    showToast("Payment executed successfully!", 'success');
   } catch (error) {
-    console.error("Payment execution failed:", error);
+    showToast(`Payment execution failed: ${error.message}`, 'error');
     
     // Try to get the subscription details to debug
     try {
       const subscription = await subscriptionManager.subscriptions(subId);
-      console.log("Subscription details:", {
+      const details = {
         user: subscription.user,
         merchant: subscription.merchant,
         amount: ethers.formatUnits(subscription.amount, 6),
         active: subscription.active,
         useTreasury: subscription.useTreasury
-      });
+      };
+      showToast(`Subscription details: ${JSON.stringify(details)}`, 'info');
       
       // Additional debugging: check if merchant address is a contract
       const merchantCode = await provider.getCode(subscription.merchant);
-      console.log("Merchant is contract:", merchantCode !== "0x");
+      showToast(`Merchant is contract: ${merchantCode !== "0x"}`, 'info');
       
     } catch (subError) {
-      console.error("Failed to get subscription details:", subError);
+      showToast(`Failed to get subscription details: ${subError.message}`, 'error');
     }
     
     throw error;
