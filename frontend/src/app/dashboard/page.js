@@ -193,7 +193,7 @@ function DashboardContent() {
                 </div>
                 <div>
                   <div className="font-semibold">Disney+</div>
-                  <div className="text-sm text-gray-400">2024-09-27</div>
+                  <div className="text-sm text-gray-400">2025-09-27</div>
                 </div>
               </div>
               <div className="text-right">
