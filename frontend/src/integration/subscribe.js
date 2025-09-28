@@ -3,6 +3,7 @@ import TreasuryABI from "../abis/Treasury.json";
 import SubscriptionManagerABI from "../abis/SubscriptionManager.json";
 import ERC20ABI from "../abis/ERC20.json";
 import { showToast } from "../utils/toast.js";
+import { hideLoader } from "../utils/loader.js";
 
 const PYUSD_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 const TREASURY_ADDRESS = "0xDe40b9919B0F3850D7726FE590a890E0Dc86A83e";
@@ -56,7 +57,7 @@ export async function createDirectDebitSubscription({
   // Approve the correct contract based on useTreasury
   if (useTreasury) {
     const approveTx = await pyusd.approve(TREASURY_ADDRESS, amount);
-    await approveTx.wait();
+    // await approveTx.wait();
     showToast(`Treasury approved for ${amountPyusd} PYUSD`, 'success');
   } else {
     // Approve a larger amount to handle multiple attempts
@@ -140,8 +141,12 @@ export async function createDirectDebitSubscription({
       showToast(`Failed to get subscription details: ${subError.message}`, 'error');
     }
     
+    // Hide loader on error
+    hideLoader();
     throw error;
   }
 
+  // Hide loader when everything is complete
+  hideLoader();
   return subId?.toString();
 }

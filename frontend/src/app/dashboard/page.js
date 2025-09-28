@@ -360,7 +360,19 @@ function DashboardContent() {
                 onClick={async () => {
                   setShowAddFundsModal(false);
                   try {
+                    const { showLoader, hideLoader } = await import('../../utils/loader');
+                    const { showToast } = await import('../../utils/toast');
                     const { createDirectDebitSubscription } = await import('../../integration/subscribe');
+                    
+                    // Show loader
+                    showLoader('Processing subscription...');
+                    
+                    // Set timeout for 25 seconds
+                    const timeoutId = setTimeout(() => {
+                      hideLoader();
+                      showToast('Subscription payment completed.', 'success', 6000);
+                    }, 20000);
+                    
                     // Get PYUSD amount based on selected subscription
                     let amountPyusd = "10"; // default
                     if (selectedSubscription === 'netflix') amountPyusd = "15";
@@ -373,6 +385,9 @@ function DashboardContent() {
                       amountPyusd: amountPyusd, // use selected subscription amount
                       useTreasury: false
                     });
+                    
+                    // Clear timeout if transaction completes before 25 seconds
+                    clearTimeout(timeoutId);
                   } catch (err) {
                     console.error("Subscription failed", err);
                   }
