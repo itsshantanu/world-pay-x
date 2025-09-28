@@ -10,6 +10,7 @@ import { ethers } from 'ethers';
 function DashboardContent() {
   const [showToast, setShowToast] = useState(false);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState('');
 
   const { walletAddress, disconnect } = useWallet();
   const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
@@ -302,12 +303,16 @@ function DashboardContent() {
             <div className="mb-6">
               <label className="block text-white font-semibold mb-3">Select Subscription</label>
               <div className="relative">
-                <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
-                  <option>Choose subscription service</option>
-                  <option>Netflix - 15.99 PYUSD/month</option>
-                  <option>Spotify - 9.99 PYUSD/month</option>
-                  <option>Disney+ - 7.99 PYUSD/month</option>
-                  <option>YouTube Premium - 11.99 PYUSD/month</option>
+                <select
+                  value={selectedSubscription}
+                  onChange={(e) => setSelectedSubscription(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500"
+                >
+                  <option value="">Choose subscription service</option>
+                  <option value="netflix">Netflix - 15 PYUSD/month</option>
+                  <option value="spotify">Spotify - 10 PYUSD/month</option>
+                  <option value="disney">Disney+ - 8 PYUSD/month</option>
+                  <option value="youtube">YouTube Premium - 12 PYUSD/month</option>
                 </select>
                 <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -356,9 +361,16 @@ function DashboardContent() {
                   setShowAddFundsModal(false);
                   try {
                     const { createDirectDebitSubscription } = await import('../../integration/subscribe');
+                    // Get PYUSD amount based on selected subscription
+                    let amountPyusd = "10"; // default
+                    if (selectedSubscription === 'netflix') amountPyusd = "15";
+                    else if (selectedSubscription === 'spotify') amountPyusd = "10";
+                    else if (selectedSubscription === 'disney') amountPyusd = "8";
+                    else if (selectedSubscription === 'youtube') amountPyusd = "12";
+                    
                     await createDirectDebitSubscription({
                       merchant: "0x327f589ff76a195754f11735e0EAad31e4795401", // example merchant
-                      amountPyusd: "10", // could be replaced with input value
+                      amountPyusd: amountPyusd, // use selected subscription amount
                       useTreasury: false
                     });
                   } catch (err) {
