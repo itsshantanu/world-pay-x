@@ -121,7 +121,7 @@ function DashboardContent() {
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <span>Netflix - Feb 15</span>
+              <span>Netflix - Oct 28</span>
             </div>
           </div>
 
@@ -155,7 +155,7 @@ function DashboardContent() {
                 </div>
                 <div>
                   <div className="font-semibold">Netflix</div>
-                  <div className="text-sm text-gray-400">2024-01-15</div>
+                  <div className="text-sm text-gray-400">2025-09-28</div>
                 </div>
               </div>
               <div className="text-right">
@@ -174,7 +174,7 @@ function DashboardContent() {
                 </div>
                 <div>
                   <div className="font-semibold">Spotify</div>
-                  <div className="text-sm text-gray-400">2024-01-10</div>
+                  <div className="text-sm text-gray-400">2025-09-27</div>
                 </div>
               </div>
               <div className="text-right">
@@ -193,7 +193,7 @@ function DashboardContent() {
                 </div>
                 <div>
                   <div className="font-semibold">Disney+</div>
-                  <div className="text-sm text-gray-400">2024-01-05</div>
+                  <div className="text-sm text-gray-400">2024-09-27</div>
                 </div>
               </div>
               <div className="text-right">
