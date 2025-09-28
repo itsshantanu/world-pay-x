@@ -57,7 +57,7 @@ export async function createDirectDebitSubscription({
   // Approve the correct contract based on useTreasury
   if (useTreasury) {
     const approveTx = await pyusd.approve(TREASURY_ADDRESS, amount);
-    // await approveTx.wait();
+    await approveTx.wait();
     showToast(`Treasury approved for ${amountPyusd} PYUSD`, 'success');
   } else {
     // Approve a larger amount to handle multiple attempts
