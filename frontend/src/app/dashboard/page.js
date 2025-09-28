@@ -304,16 +304,18 @@ function DashboardContent() {
               <div className="relative">
                 <select className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500">
                   <option>Choose subscription service</option>
-                  <option>Netflix - $15.99/month</option>
-                  <option>Spotify - $9.99/month</option>
-                  <option>Disney+ - $7.99/month</option>
-                  <option>YouTube Premium - $11.99/month</option>
+                  <option>Netflix - 15.99 PYUSD/month</option>
+                  <option>Spotify - 9.99 PYUSD/month</option>
+                  <option>Disney+ - 7.99 PYUSD/month</option>
+                  <option>YouTube Premium - 11.99 PYUSD/month</option>
                 </select>
                 <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
             </div>
+
+            <div className="border-t border-gray-700 my-8"></div>
 
             {/* Deposit Amount and Pay With */}
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -365,7 +367,7 @@ function DashboardContent() {
                 }}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
               >
-                Confirm Deposit
+               Deposit
               </button>
             </div>
           </div>
